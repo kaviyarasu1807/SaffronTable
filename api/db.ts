@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import path from "path";
 import { fileURLToPath } from "url";
-import { dishes as defaultDishes } from "./data.js";
+import { dishes as defaultDishes } from "./data";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

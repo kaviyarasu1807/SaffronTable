@@ -35,6 +35,7 @@ import {
   LogOut
 } from "lucide-react";
 import { useTheme } from "./contexts/ThemeContext";
+import AdminPage from "./pages/AdminPage";
 
 type Dish = {
   id: string;
@@ -110,9 +111,9 @@ function AuthModal({ onClose, onLogin }: { onClose: () => void; onLogin: (user: 
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      
+
       if (!res.ok) throw new Error(data.error || "Authentication failed");
-      
+
       localStorage.setItem("token", data.token);
       onLogin(data.user);
       onClose();
@@ -127,21 +128,21 @@ function AuthModal({ onClose, onLogin }: { onClose: () => void; onLogin: (user: 
     <div className="drawer-backdrop" onClick={onClose} style={{ zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ background: 'var(--paper)', padding: '40px', borderRadius: '16px', width: '90%', maxWidth: '420px', display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }} onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-          <h3 style={{fontFamily:'var(--serif)', fontSize:'28px', margin:0, lineHeight: 1}}>{isRegister ? "Create Account" : "Welcome Back"}</h3>
-          <button onClick={onClose} style={{ background: 'var(--background)', border: '1px solid var(--border)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><X size={16}/></button>
+          <h3 style={{ fontFamily: 'var(--serif)', fontSize: '28px', margin: 0, lineHeight: 1 }}>{isRegister ? "Create Account" : "Welcome Back"}</h3>
+          <button onClick={onClose} style={{ background: 'var(--background)', border: '1px solid var(--border)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><X size={16} /></button>
         </div>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {isRegister && (
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize:'13px', fontWeight:600 }}>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
               Name
               <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="Your Name" style={{ padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)' }} />
             </label>
           )}
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize:'13px', fontWeight:600 }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
             Email
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@example.com" style={{ padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)' }} />
           </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize:'13px', fontWeight:600 }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
             Password
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" style={{ padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)' }} />
           </label>
@@ -165,22 +166,22 @@ function DishModal({ dish, onClose, onAdd }: { dish: Dish; onClose: () => void; 
     <div className="drawer-backdrop" onClick={onClose} style={{ zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="dish-card" style={{ width: '90%', maxWidth: '500px', cursor: 'default' }} onClick={e => e.stopPropagation()}>
         <div className="dish-image-wrap" style={{ height: '300px' }}>
-          <img src={dish.image} alt={dish.name} style={{ height: '100%', objectFit: 'cover', width: '100%' }}/>
-          <button className="favorite-button" onClick={onClose} style={{ background: 'var(--paper)', opacity: 1 }}><X size={17}/></button>
+          <img src={dish.image} alt={dish.name} style={{ height: '100%', objectFit: 'cover', width: '100%' }} />
+          <button className="favorite-button" onClick={onClose} style={{ background: 'var(--paper)', opacity: 1 }}><X size={17} /></button>
         </div>
         <div className="dish-content">
           <div className="dish-heading">
             <h3 style={{ fontSize: '24px' }}>{dish.name}</h3>
             {dish.veg && <span className="veg-dot" />}
           </div>
-          <p style={{ fontSize: '16px', margin: '16px 0', color:'var(--muted-ink)' }}>{dish.description}</p>
+          <p style={{ fontSize: '16px', margin: '16px 0', color: 'var(--muted-ink)' }}>{dish.description}</p>
           <div className="dish-meta" style={{ marginBottom: '24px' }}>
             <span className="rating"><Star size={13} fill="currentColor" /> {dish.rating}</span>
             <span><Clock3 size={13} /> {dish.time}</span>
             <span className="price">{formatPrice(dish.price)}</span>
-            <span style={{ color: 'var(--tomato)', marginLeft:'auto' }}>🌶️ Medium</span>
+            <span style={{ color: 'var(--tomato)', marginLeft: 'auto' }}>🌶️ Medium</span>
           </div>
-          <button className="primary-button wide" onClick={() => { onAdd(); onClose(); }}>Add to order <ArrowRight size={16}/></button>
+          <button className="primary-button wide" onClick={() => { onAdd(); onClose(); }}>Add to order <ArrowRight size={16} /></button>
         </div>
       </div>
     </div>
@@ -206,24 +207,22 @@ function DishCard({ dish, addToCart, liked, toggleLike, onClick }: { dish: Dish;
       setIsAdding(false);
     }, 420);
   };
-  return <article className="dish-card" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
-    <div className="dish-image-wrap"><img src={dish.image} alt={dish.name} /><button className={`favorite-button ${liked ? "liked" : ""}`} onClick={(e) => { e.stopPropagation(); toggleLike(dish.id); }} aria-label="Save dish"><Heart size={17} fill={liked ? "currentColor" : "none"} /></button>{dish.tag && <span className="dish-tag">{dish.tag}</span>}</div>
-    <div className="dish-content"><div className="dish-heading"><h3>{dish.name}</h3>{dish.veg && <span className="veg-dot" aria-label="Vegetarian" />}</div><p>{dish.description}</p><div className="dish-meta"><span className="rating"><Star size={13} fill="currentColor" /> {dish.rating}</span><span><Clock3 size={13} /> {dish.time}</span><span className="price">{formatPrice(dish.price)}</span></div><button className={`add-button ${isAdding ? "is-adding" : ""}`} onClick={handleAdd} disabled={isAdding}>{isAdding ? <><LoaderCircle size={16} className="spin" /> Adding...</> : <><Plus size={16} /> Add to order</>}</button></div>
+  return <article className="dish-card" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default', background: 'var(--paper)', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', padding: '16px', display: 'flex', flexDirection: 'column' }}>
+    <div className="dish-image-wrap" style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '16px', aspectRatio: '4/3' }}><img src={dish.image} alt={dish.name} /><button className={`favorite-button ${liked ? "liked" : ""}`} onClick={(e) => { e.stopPropagation(); toggleLike(dish.id); }} aria-label="Save dish"><Heart size={17} fill={liked ? "currentColor" : "none"} /></button>{dish.tag && <span className="dish-tag" style={{ borderRadius: '4px' }}>{dish.tag}</span>}</div>
+    <div className="dish-content" style={{ padding: '0', flex: 1, display: 'flex', flexDirection: 'column' }}><div className="dish-heading"><h3 style={{ fontSize: '16px', fontWeight: 700, fontFamily: 'Outfit' }}>{dish.name}</h3>{dish.veg && <span className="veg-dot" aria-label="Vegetarian" />}</div><p style={{ color: 'var(--muted-ink)', fontSize: '12px', marginTop: '8px', lineHeight: '1.5' }}>{dish.description}</p><div className="dish-meta" style={{ marginTop: 'auto', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><span className="price" style={{ fontSize: '16px', fontWeight: 'bold', color: 'var(--ink)' }}>{formatPrice(dish.price)}</span><button className={`primary-button ${isAdding ? "is-adding" : ""}`} onClick={handleAdd} disabled={isAdding} style={{ padding: '6px 16px', borderRadius: '20px', fontSize: '12px' }}>{isAdding ? <><LoaderCircle size={14} className="spin" /> Adding</> : <>Add +</>}</button></div></div>
   </article>;
 }
 
 function Home({ dishes, addToCart, liked, toggleLike, onCart, onDishClick }: { dishes: Dish[]; addToCart: (dish: Dish) => void; liked: string[]; toggleLike: (id: string) => void; onCart: () => void; onDishClick?: (dish: Dish) => void; }) {
   const [, navigate] = useLocation();
   return <div>
-    <section className="hero-section">
-      <div className="hero-copy">
-        <div className="hero-kicker"><span className="pulse-dot" /> Now delivering across Bengaluru</div>
-        <h1>Good food is<br /><em>a feeling.</em></h1>
-        <p>Season-led Indian cooking, made for the table. Order something comforting, curious, or a little bit of both.</p>
-        <div className="hero-actions"><button className="primary-button" onClick={() => navigate("/menu")}>Explore the menu <ArrowRight size={17} /></button><button className="text-button" onClick={() => window.dispatchEvent(new Event('open-reservation'))}>Book a table <span>↗</span></button></div>
-        <div className="hero-trust"><div className="avatar-stack"><span>R</span><span>A</span><span>M</span><span>+</span></div><div><strong>4.9 / 5</strong><small>Loved by 2,000+ food people</small></div></div>
+    <section className="hero-section" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url(https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=2000&auto=format&fit=crop)', backgroundSize: 'cover', backgroundPosition: 'center', width: '100%', maxWidth: '100%', margin: 0, minHeight: 'calc(100vh - 78px)', display: 'flex', alignItems: 'center', padding: '0 20px' }}>
+      <div className="hero-copy" style={{ margin: '0 auto', maxWidth: '1280px', width: '100%', paddingLeft: 0 }}>
+        <div className="hero-kicker" style={{ color: 'var(--tomato)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '12px' }}>Authentic Indian Flavours</div>
+        <h1 style={{ color: '#fffdf7' }}>Saffron Table</h1>
+        <p style={{ color: '#d1d1d1', fontSize: '18px', maxWidth: '420px', lineHeight: '1.5', marginTop: '20px' }}>A perfect blend of tradition, spices and taste.</p>
+        <div className="hero-actions" style={{ marginTop: '40px' }}><button className="primary-button" style={{ padding: '16px 32px', borderRadius: '30px' }} onClick={() => navigate("/menu")}>Order Now</button></div>
       </div>
-      <div className="hero-visual"><div className="hero-stamp"><Sparkles size={15} /><span>Small batch.<br />Big comfort.</span></div><img src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1400&q=90" alt="A colourful Indian thali on a wooden table" /><div className="hero-caption"><span>01 / 03</span><strong>From our kitchen</strong><small>Thali for one, joy for many.</small></div></div>
     </section>
 
     <FoodCarousel dishes={dishes} addToCart={addToCart} />
@@ -289,7 +288,7 @@ function MenuPage({ dishes, addToCart, liked, toggleLike, onDishClick }: { dishe
   const [aiMood, setAiMood] = useState<string | null>(null);
 
   const moodFilters: Record<string, string[]> = {
-    "Spicy & Comforting": ["chicken-ghee-roast", "saffron-biryani", "gunpowder-calamari"],
+    "Spicy & Comforting": ["chicken-ghee-roast", "saffron-biryani", "gunpowder-calamari", "butter-chicken", "paneer-tikka-masala"],
     "Light & Fresh": ["malabar-fish", "tandoori-malai-broccoli"],
     "Rich & Decadent": ["nalli-nihari", "dal-makhani", "palak-guchhi-risotto"]
   };
@@ -304,22 +303,35 @@ function MenuPage({ dishes, addToCart, liked, toggleLike, onDishClick }: { dishe
     return result;
   }, [search, selected, aiMood, dishes]);
 
-  return <div className="menu-page"><div className="menu-header"><div><span className="eyebrow">Order online</span><h1>A table for<br /><em>every mood.</em></h1></div><p>Comforting classics, little surprises, and plenty of things to pass around. Delivered warm from our kitchen in Indiranagar.</p></div><div className="menu-toolbar"><div className="search-field"><Search size={17} /><input value={search} onChange={(e) => { setSearch(e.target.value); setAiMood(null); }} placeholder="Search dishes, ingredients..." /></div><div className="filter-pills">{["All dishes", "Small plates", "Mains", "Breads", "Sweet finish", "Drinks", "Vegetarian"].map((filter) => <button key={filter} className={selected === filter && !aiMood ? "selected" : ""} onClick={() => { setSelected(filter); setAiMood(null); }}>{filter}</button>)}</div></div><div className="menu-results">
-    
-    <div style={{ background: 'var(--sage)', padding: '24px', borderRadius: '12px', marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Sparkles size={20} color="var(--tomato)" />
-        <strong style={{ fontFamily: 'var(--serif)', fontSize: '20px' }}>Chef's Recommendations</strong>
-      </div>
-      <p style={{ margin: 0, fontSize: '13px', color: 'var(--muted-ink)' }}>Not sure what to order? Pick a mood and let us curate a perfect meal for you.</p>
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        {Object.keys(moodFilters).map(mood => (
-          <button key={mood} className={`outline-button ${aiMood === mood ? 'active' : ''}`} style={aiMood === mood ? { background: 'var(--tomato)', color: 'white', borderColor: 'var(--tomato)' } : { background: 'var(--paper)', marginTop: 0 }} onClick={() => setAiMood(aiMood === mood ? null : mood)}>{mood}</button>
-        ))}
+  return <div className="menu-page">
+    <div className="menu-header" style={{
+      backgroundImage: 'linear-gradient(to right, rgba(28, 25, 23, 0.9) 0%, rgba(28, 25, 23, 0.6) 50%, rgba(28, 25, 23, 0.2) 100%), url("https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=2000&auto=format&fit=crop")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      color: 'white',
+      padding: '100px 40px 60px'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <h1 style={{ fontSize: '64px', color: 'white', fontFamily: 'var(--serif)' }}>Menu</h1>
+        <p style={{ color: '#d1d1d1', fontSize: '16px', maxWidth: '400px', marginTop: '16px' }}>Fresh ingredients, authentic flavours</p>
       </div>
     </div>
 
-    <div className="results-top"><span>{filtered.length} dishes to make your day</span><button onClick={() => toast("Showing our most popular dishes")}>Sort: Popular <ChevronDown size={15} /></button></div><div className="dish-grid menu-grid">{filtered.map((dish) => <DishCard key={dish.id} dish={dish} addToCart={addToCart} liked={liked.includes(dish.id)} toggleLike={toggleLike} onClick={() => onDishClick && onDishClick(dish)} />)}</div>{filtered.length === 0 && <div className="empty-state"><span>◌</span><h3>Nothing on this mood yet.</h3><p>Try another search or browse all dishes.</p><button className="primary-button" onClick={() => { setSearch(""); setSelected("All dishes"); setAiMood(null); }}>Reset menu</button></div>}</div><Footer /></div>;
+    <div className="menu-toolbar" style={{ background: 'var(--paper)', borderTop: 'none' }}>
+      <div className="search-field"><Search size={17} /><input value={search} onChange={(e) => { setSearch(e.target.value); setAiMood(null); }} placeholder="Search dishes..." /></div>
+      <div className="filter-pills">{["All dishes", "Small plates", "Mains", "Breads", "Sweet finish", "Drinks", "Vegetarian"].map((filter) => <button key={filter} className={selected === filter && !aiMood ? "selected" : ""} onClick={() => { setSelected(filter); setAiMood(null); }} style={{ padding: '8px 20px' }}>{filter}</button>)}</div>
+    </div>
+
+    <div className="menu-results">
+      <div className="results-top">
+        <h2 style={{ fontSize: '24px', fontFamily: 'var(--serif)', display: 'flex', alignItems: 'center', gap: '8px' }}><Star size={20} color="var(--tomato)" fill="var(--tomato)" /> Chef's Special</h2>
+        <button onClick={() => toast("Showing our most popular dishes")}>View All</button>
+      </div>
+      <div className="dish-grid menu-grid" style={{ gap: '30px' }}>{filtered.map((dish) => <DishCard key={dish.id} dish={dish} addToCart={addToCart} liked={liked.includes(dish.id)} toggleLike={toggleLike} onClick={() => onDishClick && onDishClick(dish)} />)}</div>
+      {filtered.length === 0 && <div className="empty-state"><span>◌</span><h3>Nothing found.</h3><p>Try another search or browse all dishes.</p><button className="primary-button" onClick={() => { setSearch(""); setSelected("All dishes"); setAiMood(null); }}>Reset menu</button></div>}
+    </div>
+    <Footer />
+  </div>;
 }
 
 function CartDrawer({ dishes, items, setItems, onClose, onCheckout }: { dishes: Dish[]; items: { dish: Dish; quantity: number }[]; setItems: React.Dispatch<React.SetStateAction<{ dish: Dish; quantity: number }[]>>; onClose: () => void; onCheckout: () => void }) {
@@ -330,7 +342,7 @@ function CartDrawer({ dishes, items, setItems, onClose, onCheckout }: { dishes: 
   const delivery = subtotal > 699 || subtotal === 0 ? 0 : 49;
   const total = subtotal + delivery;
   const update = (id: string, delta: number) => setItems((current) => current.map((item) => item.dish.id === id ? { ...item, quantity: item.quantity + delta } : item).filter((item) => item.quantity > 0));
-  
+
   const handlePromo = () => {
     if (promo.toUpperCase() === "SAFFRON10") {
       setDiscount(50);
@@ -343,28 +355,19 @@ function CartDrawer({ dishes, items, setItems, onClose, onCheckout }: { dishes: 
   const hasDrink = items.some(i => i.dish.category === "Drinks");
   const suggestedDrink = dishes.find(d => d.category === "Drinks");
 
-  return <div className="drawer-backdrop" onClick={onClose}><aside className="cart-drawer" onClick={(e) => e.stopPropagation()}><div className="drawer-head"><div><span className="eyebrow">Your order</span><h2>Good choice.</h2></div><button className="close-button" onClick={onClose}><X size={20} /></button></div>{items.length === 0 ? <div className="drawer-empty"><ShoppingBag size={35} strokeWidth={1.2} /><h3>Your basket is waiting.</h3><p>Add a few things you love and we'll bring them to your door.</p><Link href="/menu" className="primary-button" onClick={onClose}>Browse menu <ArrowRight size={16} /></Link></div> : <><div className="cart-items">{items.map(({ dish, quantity }) => <div className="cart-item" key={dish.id}><img src={dish.image} alt="" /><div className="cart-item-copy"><strong>{dish.name}</strong><span>{formatPrice(dish.price)}</span><div className="quantity"><button onClick={() => update(dish.id, -1)}><Minus size={14} /></button><b>{quantity}</b><button onClick={() => update(dish.id, 1)}><Plus size={14} /></button></div></div></div>)}</div><div className="cart-note"><Sparkles size={15} /> You unlock free delivery over ₹699</div>
-  
-  <div style={{ padding: '0 24px', display: 'flex', gap: '8px' }}>
-    <input value={promo} onChange={e => setPromo(e.target.value)} placeholder="Promo code (try SAFFRON10)" style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)' }} />
-    <button className="outline-button" onClick={handlePromo}>Apply</button>
-  </div>
+  return <div className="drawer-backdrop" onClick={onClose}><aside className="cart-drawer" onClick={(e) => e.stopPropagation()} style={{ background: '#f8f9fa', padding: 0 }}><div className="drawer-head" style={{ padding: '32px 32px 0' }}><div><h2 style={{ fontSize: '24px', fontWeight: 600, fontFamily: 'Outfit' }}>Your Cart</h2></div><button className="close-button" onClick={onClose}><X size={20} /></button></div>{items.length === 0 ? <div className="drawer-empty"><ShoppingBag size={35} strokeWidth={1.2} /><h3>Your basket is waiting.</h3><p>Add a few things you love and we'll bring them to your door.</p><Link href="/menu" className="primary-button" onClick={onClose}>Browse menu <ArrowRight size={16} /></Link></div> : <><div className="cart-items" style={{ padding: '0 32px' }}>{items.map(({ dish, quantity }) => <div className="cart-item" key={dish.id} style={{ display: 'flex', gap: '16px', alignItems: 'center', borderBottom: '1px solid #e5e7eb', padding: '20px 0' }}><img src={dish.image} alt="" style={{ borderRadius: '12px', width: '60px', height: '60px' }} /><div className="cart-item-copy"><strong>{dish.name}</strong><span>{formatPrice(dish.price)}</span></div><div className="quantity" style={{ position: 'relative', border: 'none', background: 'transparent', gap: '16px' }}><button onClick={() => update(dish.id, -1)} style={{ background: '#e5e7eb', borderRadius: '4px', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={12} /></button><b>{quantity}</b><button onClick={() => update(dish.id, 1)} style={{ background: '#e5e7eb', borderRadius: '4px', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={12} /></button></div><button style={{ color: '#ef4444', marginLeft: 'auto', background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => update(dish.id, -quantity)}>🗑️</button></div>)}</div>
 
-  {!hasDrink && suggestedDrink && (
-    <div style={{ margin: '16px 24px', padding: '16px', background: 'var(--cream)', borderRadius: '8px' }}>
-      <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 600 }}>Thirsty? You might also like:</p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <img src={suggestedDrink.image} alt={suggestedDrink.name} style={{ width: 48, height: 48, borderRadius: '6px', objectFit: 'cover' }}/>
-        <div style={{ flex: 1 }}>
-          <strong style={{ display: 'block', fontSize: '14px' }}>{suggestedDrink.name}</strong>
-          <span style={{ fontSize: '13px', color: 'var(--muted-ink)' }}>{formatPrice(suggestedDrink.price)}</span>
-        </div>
-        <button className="primary-button" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => update(suggestedDrink.id, 1)}>Add</button>
-      </div>
+    <div style={{ padding: '24px 32px', display: 'flex', gap: '8px' }}>
+      <input value={promo} onChange={e => setPromo(e.target.value)} placeholder="Promo code (try SAFFRON10)" style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', background: 'white' }} />
+      <button className="primary-button" onClick={handlePromo} style={{ padding: '12px 20px', borderRadius: '8px' }}>Apply</button>
     </div>
-  )}
 
-  <div className="cart-summary"><div><span>Subtotal</span><b>{formatPrice(subtotal)}</b></div><div><span>Delivery fee</span><b>{delivery ? formatPrice(delivery) : "Free"}</b></div><div className="total"><span>Total</span><b>{formatPrice(total)}</b></div><button className="primary-button wide" onClick={onCheckout}>Continue to checkout <ArrowRight size={16} /></button></div></>}</aside></div>;
+    <div className="cart-summary" style={{ borderTop: 'none', background: 'white', padding: '32px', marginTop: 'auto', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', boxShadow: '0 -4px 20px rgba(0,0,0,0.02)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', color: '#6b7280' }}><span>Subtotal</span><b style={{ color: '#111827' }}>{formatPrice(subtotal)}</b></div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', color: '#6b7280' }}><span>Delivery Fee</span><b style={{ color: '#111827' }}>{delivery ? formatPrice(delivery) : "₹30"}</b></div>
+      <div className="total" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '20px', fontSize: '20px', display: 'flex', justifyContent: 'space-between', marginBottom: '24px', fontWeight: 600 }}><span>Total</span><b style={{ color: '#111827' }}>{formatPrice(total)}</b></div>
+      <button className="primary-button wide" style={{ padding: '18px', borderRadius: '12px', fontSize: '16px', fontWeight: 600 }} onClick={onCheckout}>Proceed to Checkout</button>
+    </div></>}</aside></div>;
 }
 
 function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity: number }[]; onBack: () => void; onSuccess: () => void }) {
@@ -373,7 +376,7 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
   const [wheelSpun, setWheelSpun] = useState(false);
   const [spinRotation, setSpinRotation] = useState(0);
   const subtotal = Math.floor(rawSubtotal * (1 - discountPercent / 100));
-  
+
   const handleSpin = () => {
     if (wheelSpun) return;
     setWheelSpun(true);
@@ -382,7 +385,7 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
     const rotations = 360 * 5; // Spin 5 times
     const extraDeg = (360 / prizes.length) * stopIndex;
     setSpinRotation(rotations + extraDeg);
-    
+
     setTimeout(() => {
       const won = prizes[stopIndex];
       setDiscountPercent(won);
@@ -396,7 +399,7 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
     if (isPlacing) return;
     setIsPlacing(true);
     const paymentToast = toast.loading("Confirming your payment...", { description: "Securely connecting to UPI" });
-    
+
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -417,27 +420,27 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
     }
   };
   return <div className="checkout-page"><div className="checkout-top"><button className="back-link" onClick={onBack}>← Back to basket</button><span className="checkout-logo">Saffron Table</span><span className="secure-check"><BadgeCheck size={15} /> Secure checkout</span></div><div className="checkout-layout"><div className="checkout-form"><span className="eyebrow">Almost there</span><h1>Make it yours.</h1><p className="checkout-intro">We'll deliver your order warm and wonderful.</p>
-  
-  <div className="form-section" style={{ background: 'var(--card)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)', textAlign: 'center' }}>
-    <h3 style={{ fontFamily: 'var(--serif)', fontSize: '24px', marginBottom: '8px' }}>Spin to Win!</h3>
-    <p style={{ color: 'var(--muted-ink)', fontSize: '13px', marginBottom: '24px' }}>Spin the wheel for a chance to win up to 10% off your order.</p>
-    <div style={{ position: 'relative', width: '200px', height: '200px', margin: '0 auto 24px' }}>
-      <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', zIndex: 10, width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: '20px solid var(--tomato)' }} />
-      <motion.div animate={{ rotate: -spinRotation }} transition={{ duration: 3, ease: "easeOut" }} style={{ width: '100%', height: '100%', borderRadius: '50%', border: '4px solid var(--ink)', background: 'conic-gradient(#fffdf7 0deg 45deg, #e9eedf 45deg 90deg, #fffdf7 90deg 135deg, #e9eedf 135deg 180deg, #fffdf7 180deg 225deg, #e9eedf 225deg 270deg, #fffdf7 270deg 315deg, #e9eedf 315deg 360deg)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(0deg)' }}>0%</div>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(45deg)' }}>5%</div>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(90deg)' }}>0%</div>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(135deg)' }}>10%</div>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(180deg)' }}>0%</div>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(225deg)' }}>5%</div>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(270deg)' }}>0%</div>
-         <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(315deg)' }}>10%</div>
-      </motion.div>
-    </div>
-    <button className="primary-button" onClick={handleSpin} disabled={wheelSpun}>{wheelSpun ? 'Reward Applied' : 'Spin the Wheel'}</button>
-  </div>
 
-  <div className="form-section"><div className="form-section-head"><span>01</span><h3>Your details</h3></div><div className="form-grid"><label>First name<input placeholder="Aarav" /></label><label>Phone number<input placeholder="+91 98765 43210" /></label><label className="full">Email address<input placeholder="you@example.com" /></label></div></div><div className="form-section"><div className="form-section-head"><span>02</span><h3>Delivery address</h3></div><div className="form-grid"><label className="full">Flat / house no.<input placeholder="12B, Palm Grove Apartments" /></label><label>Street / area<input placeholder="12th Main, Indiranagar" /></label><label>PIN code<input placeholder="560038" /></label></div><button className="address-toggle" onClick={() => toast("Address saved for your next order")}>+ Add delivery instructions</button></div><div className="form-section"><div className="form-section-head"><span>03</span><h3>Payment</h3></div><div className="payment-options"><button className="payment-option active"><span className="payment-icon">UPI</span><span><strong>UPI</strong><small>GPay, PhonePe, Paytm</small></span><span className="radio-dot" /></button><button className="payment-option" onClick={() => toast("Card payments are available at launch") }><span className="payment-icon">▭</span><span><strong>Card</strong><small>Credit or debit card</small></span><span className="radio-dot" /></button></div></div><button className={`primary-button wide ${isPlacing ? "is-processing" : ""}`} onClick={handlePlaceOrder} disabled={isPlacing}>{isPlacing ? <><LoaderCircle size={16} className="spin" /> Confirming payment...</> : <>Place order · {formatPrice(subtotal + (subtotal > 699 ? 0 : 49))} <ArrowRight size={16} /></>}</button></div><div className="checkout-summary"><span className="eyebrow">Order summary</span><h3>From Saffron Table</h3><div className="summary-items">{items.map(({ dish, quantity }) => <div key={dish.id}><span>{quantity} × {dish.name}</span><b>{formatPrice(dish.price * quantity)}</b></div>)}</div><div className="summary-lines"><div><span>Subtotal</span><b>{formatPrice(rawSubtotal)}</b></div>{discountPercent > 0 && <div><span style={{ color: 'var(--tomato)' }}>Discount ({discountPercent}%)</span><b style={{ color: 'var(--tomato)' }}>-{formatPrice(rawSubtotal - subtotal)}</b></div>}<div><span>Delivery fee</span><b>{subtotal > 699 ? "Free" : "₹49"}</b></div><div className="total"><span>Total</span><b>{formatPrice(subtotal + (subtotal > 699 ? 0 : 49))}</b></div></div><div className="estimated"><Clock3 size={16} /><span><strong>Estimated arrival</strong><small>35–45 min · Indiranagar</small></span></div></div></div></div>;
+    <div className="form-section" style={{ background: 'var(--card)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)', textAlign: 'center' }}>
+      <h3 style={{ fontFamily: 'var(--serif)', fontSize: '24px', marginBottom: '8px' }}>Spin to Win!</h3>
+      <p style={{ color: 'var(--muted-ink)', fontSize: '13px', marginBottom: '24px' }}>Spin the wheel for a chance to win up to 10% off your order.</p>
+      <div style={{ position: 'relative', width: '200px', height: '200px', margin: '0 auto 24px' }}>
+        <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', zIndex: 10, width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: '20px solid var(--tomato)' }} />
+        <motion.div animate={{ rotate: -spinRotation }} transition={{ duration: 3, ease: "easeOut" }} style={{ width: '100%', height: '100%', borderRadius: '50%', border: '4px solid var(--ink)', background: 'conic-gradient(#fffdf7 0deg 45deg, #e9eedf 45deg 90deg, #fffdf7 90deg 135deg, #e9eedf 135deg 180deg, #fffdf7 180deg 225deg, #e9eedf 225deg 270deg, #fffdf7 270deg 315deg, #e9eedf 315deg 360deg)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(0deg)' }}>0%</div>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(45deg)' }}>5%</div>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(90deg)' }}>0%</div>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(135deg)' }}>10%</div>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(180deg)' }}>0%</div>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(225deg)' }}>5%</div>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(270deg)' }}>0%</div>
+          <div style={{ position: 'absolute', textAlign: 'center', width: '100%', top: '15%', fontWeight: 'bold', fontSize: '12px', transform: 'rotate(315deg)' }}>10%</div>
+        </motion.div>
+      </div>
+      <button className="primary-button" onClick={handleSpin} disabled={wheelSpun}>{wheelSpun ? 'Reward Applied' : 'Spin the Wheel'}</button>
+    </div>
+
+    <div className="form-section"><div className="form-section-head"><span>01</span><h3>Your details</h3></div><div className="form-grid"><label>First name<input placeholder="Aarav" /></label><label>Phone number<input placeholder="+91 98765 43210" /></label><label className="full">Email address<input placeholder="you@example.com" /></label></div></div><div className="form-section"><div className="form-section-head"><span>02</span><h3>Delivery address</h3></div><div className="form-grid"><label className="full">Flat / house no.<input placeholder="12B, Palm Grove Apartments" /></label><label>Street / area<input placeholder="12th Main, Indiranagar" /></label><label>PIN code<input placeholder="560038" /></label></div><button className="address-toggle" onClick={() => toast("Address saved for your next order")}>+ Add delivery instructions</button></div><div className="form-section"><div className="form-section-head"><span>03</span><h3>Payment</h3></div><div className="payment-options"><button className="payment-option active"><span className="payment-icon">UPI</span><span><strong>UPI</strong><small>GPay, PhonePe, Paytm</small></span><span className="radio-dot" /></button><button className="payment-option" onClick={() => toast("Card payments are available at launch")}><span className="payment-icon">▭</span><span><strong>Card</strong><small>Credit or debit card</small></span><span className="radio-dot" /></button></div></div><button className={`primary-button wide ${isPlacing ? "is-processing" : ""}`} onClick={handlePlaceOrder} disabled={isPlacing}>{isPlacing ? <><LoaderCircle size={16} className="spin" /> Confirming payment...</> : <>Place order · {formatPrice(subtotal + (subtotal > 699 ? 0 : 49))} <ArrowRight size={16} /></>}</button></div><div className="checkout-summary"><span className="eyebrow">Order summary</span><h3>From Saffron Table</h3><div className="summary-items">{items.map(({ dish, quantity }) => <div key={dish.id}><span>{quantity} × {dish.name}</span><b>{formatPrice(dish.price * quantity)}</b></div>)}</div><div className="summary-lines"><div><span>Subtotal</span><b>{formatPrice(rawSubtotal)}</b></div>{discountPercent > 0 && <div><span style={{ color: 'var(--tomato)' }}>Discount ({discountPercent}%)</span><b style={{ color: 'var(--tomato)' }}>-{formatPrice(rawSubtotal - subtotal)}</b></div>}<div><span>Delivery fee</span><b>{subtotal > 699 ? "Free" : "₹49"}</b></div><div className="total"><span>Total</span><b>{formatPrice(subtotal + (subtotal > 699 ? 0 : 49))}</b></div></div><div className="estimated"><Clock3 size={16} /><span><strong>Estimated arrival</strong><small>35–45 min · Indiranagar</small></span></div></div></div></div>;
 }
 
 function DeliveryMap({ statusStep }: { statusStep: number }) {
@@ -456,7 +459,7 @@ function DeliveryMap({ statusStep }: { statusStep: number }) {
     <div className="map-place destination-pin" style={{ left: "74%", top: "19%" }}><span><MapPin size={13} /></span><small>Your table</small></div>
     <div className="rider-pin" style={{ left: `${riderX}%`, top: `${riderY}%` }}><span><Navigation size={15} fill="currentColor" /></span><small>Rider is here</small></div>
     <div className="map-status"><span className="live-pulse" /> Live route · updating</div>
-    <button className="recenter-map" onClick={() => toast("Route centered on your delivery") }><LocateFixed size={15} /> Recenter</button>
+    <button className="recenter-map" onClick={() => toast("Route centered on your delivery")}><LocateFixed size={15} /> Recenter</button>
   </div>;
 }
 
@@ -485,7 +488,8 @@ function Success({ onHome }: { onHome: () => void }) {
     return () => timers.forEach(window.clearTimeout);
   }, []);
   const statusCopy = statusStep === 1 ? "Your order is confirmed and the kitchen is getting ready." : statusStep === 2 ? "Your order is being prepared with care." : statusStep === 3 ? "Your order is on the way to Indiranagar." : "Your order is nearly at your door.";
-  return <div className="success-page"><div className="success-card"><span className="success-icon"><BadgeCheck size={30} /></span><span className="eyebrow">Order confirmed</span><h1>{statusStep === 4 ? <>Almost at<br /><em>your table.</em></> : <>It's on its way<br /><em>to your table.</em></>}</h1><p>{statusCopy} <strong>#ST-2409</strong> is being tracked live, so we'll keep you posted.</p><div className="order-track"><div className="track-line" />{[{ label: "Placed", icon: "✓" }, { label: "Preparing", icon: <Flame size={15} /> }, { label: "On the way", icon: "3" }, { label: "Delivered", icon: "4" }].map((track, index) => <div className={`track-step ${index < statusStep ? "done" : ""} ${index === statusStep ? "active" : ""}`} key={track.label}><span>{index < statusStep ? "✓" : track.icon}</span><small>{track.label}</small></div>)}</div><div className="live-status-pill"><span className="live-pulse" /> Live updates on · {statusStep === 1 ? "Kitchen notified" : statusStep === 2 ? "Preparing now" : statusStep === 3 ? "Out for delivery" : "Arriving soon"}</div><div className="success-meta"><span><MapPin size={15} /> Indiranagar, Bengaluru</span><span><Clock3 size={15} /> {statusStep >= 3 ? "10–15 min" : "35–45 min"}</span></div><DeliveryMap statusStep={statusStep} /><div className="delivery-alerts"><div><Bell size={15} /><span><strong>Get delivery alerts</strong><small>Keep this page closed and we'll notify you</small></span></div><button className={notificationsEnabled ? "enabled" : ""} onClick={async () => { if (!("Notification" in window)) { toast("Browser notifications aren't supported here"); return; } const permission = await Notification.requestPermission(); if (permission === "granted") { setNotificationsEnabled(true); toast.success("Delivery alerts enabled", { description: "We'll keep you posted in the background" }); } else { toast("Delivery alerts were not enabled"); } }}>{notificationsEnabled ? "Enabled" : "Enable"}</button></div><div className="feedback-card"><div className="feedback-heading"><span><ThumbsUp size={16} /> Order complete?</span><small>Tell us how it went</small></div><div className="rating-row">{[1, 2, 3, 4, 5].map((value) => <button className={rating >= value ? "selected" : ""} onClick={() => setRating(value)} aria-label={`${value} stars`} key={value}><Star size={21} fill={rating >= value ? "currentColor" : "none"} /></button>)}</div><div className="tip-row"><span><Gift size={15} /> Tip your rider</span><div>{["0", "20", "40", "60"].map((value) => <button className={tip === value ? "selected" : ""} key={value} onClick={() => setTip(value)}>{value === "0" ? "No tip" : `₹${value}`}</button>)}</div></div><button className="feedback-submit" onClick={() => toast.success("Thanks for the love", { description: `${rating || 5}-star rating${tip !== "0" ? ` · ₹${tip} rider tip` : ""} saved` })}>Save feedback <ArrowRight size={15} /></button></div><button className="primary-button" onClick={onHome}>Back to home <ArrowRight size={16} /></button></div></div> }
+  return <div className="success-page"><div className="success-card"><span className="success-icon"><BadgeCheck size={30} /></span><span className="eyebrow">Order confirmed</span><h1>{statusStep === 4 ? <>Almost at<br /><em>your table.</em></> : <>It's on its way<br /><em>to your table.</em></>}</h1><p>{statusCopy} <strong>#ST-2409</strong> is being tracked live, so we'll keep you posted.</p><div className="order-track"><div className="track-line" />{[{ label: "Placed", icon: "✓" }, { label: "Preparing", icon: <Flame size={15} /> }, { label: "On the way", icon: "3" }, { label: "Delivered", icon: "4" }].map((track, index) => <div className={`track-step ${index < statusStep ? "done" : ""} ${index === statusStep ? "active" : ""}`} key={track.label}><span>{index < statusStep ? "✓" : track.icon}</span><small>{track.label}</small></div>)}</div><div className="live-status-pill"><span className="live-pulse" /> Live updates on · {statusStep === 1 ? "Kitchen notified" : statusStep === 2 ? "Preparing now" : statusStep === 3 ? "Out for delivery" : "Arriving soon"}</div><div className="success-meta"><span><MapPin size={15} /> Indiranagar, Bengaluru</span><span><Clock3 size={15} /> {statusStep >= 3 ? "10–15 min" : "35–45 min"}</span></div><DeliveryMap statusStep={statusStep} /><div className="delivery-alerts"><div><Bell size={15} /><span><strong>Get delivery alerts</strong><small>Keep this page closed and we'll notify you</small></span></div><button className={notificationsEnabled ? "enabled" : ""} onClick={async () => { if (!("Notification" in window)) { toast("Browser notifications aren't supported here"); return; } const permission = await Notification.requestPermission(); if (permission === "granted") { setNotificationsEnabled(true); toast.success("Delivery alerts enabled", { description: "We'll keep you posted in the background" }); } else { toast("Delivery alerts were not enabled"); } }}>{notificationsEnabled ? "Enabled" : "Enable"}</button></div><div className="feedback-card"><div className="feedback-heading"><span><ThumbsUp size={16} /> Order complete?</span><small>Tell us how it went</small></div><div className="rating-row">{[1, 2, 3, 4, 5].map((value) => <button className={rating >= value ? "selected" : ""} onClick={() => setRating(value)} aria-label={`${value} stars`} key={value}><Star size={21} fill={rating >= value ? "currentColor" : "none"} /></button>)}</div><div className="tip-row"><span><Gift size={15} /> Tip your rider</span><div>{["0", "20", "40", "60"].map((value) => <button className={tip === value ? "selected" : ""} key={value} onClick={() => setTip(value)}>{value === "0" ? "No tip" : `₹${value}`}</button>)}</div></div><button className="feedback-submit" onClick={() => toast.success("Thanks for the love", { description: `${rating || 5}-star rating${tip !== "0" ? ` · ₹${tip} rider tip` : ""} saved` })}>Save feedback <ArrowRight size={15} /></button></div><button className="primary-button" onClick={onHome}>Back to home <ArrowRight size={16} /></button></div></div>
+}
 
 function Footer() { return <footer className="site-footer"><div className="footer-top"><div><Link href="/" className="brand footer-brand"><img className="brand-logo-img" src={logoSrc} alt="Saffron Table" /></Link><p>Good food, thoughtfully made.<br />Indiranagar · Bengaluru</p></div><div className="footer-links"><div><strong>Explore</strong><a href="#about">Our story</a><a href="#journal">Journal</a><Link href="/menu">Order online</Link></div><div><strong>Events & Bulk</strong><a href="mailto:events@saffrontable.in">events@saffrontable.in</a><a href="tel:+919876543210">+91 98765 43210</a></div><div><strong>Visit</strong><a href="#contact">Instagram ↗</a><a href="mailto:hello@saffrontable.in">Say hello</a><a href="#contact">11:30am — 11:00pm</a></div></div></div><div className="footer-bottom"><span>© 2026 Saffron Table</span><span>Made for kaviyarasur013@gmail.com</span></div></footer> }
 
@@ -526,22 +530,22 @@ function ReservationModal({ onClose }: { onClose: () => void }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
           <div>
             <span className="eyebrow">Reservation</span>
-            <h3 style={{fontFamily:'var(--serif)', fontSize:'32px', margin:0}}>Book a table</h3>
+            <h3 style={{ fontFamily: 'var(--serif)', fontSize: '32px', margin: 0 }}>Book a table</h3>
           </div>
-          <button onClick={onClose} style={{ alignSelf: 'flex-start' }}><X size={24}/></button>
+          <button onClick={onClose} style={{ alignSelf: 'flex-start' }}><X size={24} /></button>
         </div>
-        
+
         <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
           <div>
-            <label style={{ display: 'block', fontSize:'13px', fontWeight:600, marginBottom:'8px' }}>Select Date</label>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Select Date</label>
             <div style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', background: 'var(--background)' }}>
               <DayPicker mode="single" selected={date} onSelect={setDate} disabled={{ before: new Date() }} />
             </div>
           </div>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{ display: 'flex', gap: '16px' }}>
-              <label style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize:'13px', fontWeight:600 }}>
+              <label style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
                 Time
                 <select value={time} onChange={e => setTime(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)' }}>
                   <option value="18:30">18:30</option><option value="19:00">19:00</option>
@@ -549,24 +553,24 @@ function ReservationModal({ onClose }: { onClose: () => void }) {
                   <option value="20:30">20:30</option><option value="21:00">21:00</option>
                 </select>
               </label>
-              <label style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize:'13px', fontWeight:600 }}>
+              <label style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
                 Guests
                 <select value={guests} onChange={e => setGuests(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)' }}>
-                  {[1,2,3,4,5,6,7,8].map(n => <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>)}
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>)}
                 </select>
               </label>
             </div>
-            
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize:'13px', fontWeight:600 }}>
+
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
               Full Name
               <input required value={name} onChange={e => setName(e.target.value)} placeholder="Jane Doe" style={{ padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)' }} />
             </label>
-            
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize:'13px', fontWeight:600 }}>
+
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
               Special Requests
               <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Allergies, anniversaries..." rows={3} style={{ padding: '12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--background)', resize: 'vertical' }} />
             </label>
-            
+
             <button type="submit" className="primary-button wide" disabled={loading} style={{ marginTop: 'auto', padding: '16px' }}>
               {loading ? <LoaderCircle className="spin" size={16} /> : `Confirm Booking for ${guests} guests`}
             </button>
@@ -595,8 +599,8 @@ function KitchenView() {
       <header style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 600 }}>Kitchen Display</h1>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-           <span style={{ padding: '4px 12px', background: 'var(--primary)', color: 'white', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>{orders.length} Active Orders</span>
-           <Link href="/" style={{ color: 'var(--muted-ink)' }}>Back to App</Link>
+          <span style={{ padding: '4px 12px', background: 'var(--primary)', color: 'white', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>{orders.length} Active Orders</span>
+          <Link href="/" style={{ color: 'var(--muted-ink)' }}>Back to App</Link>
         </div>
       </header>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
@@ -610,8 +614,8 @@ function KitchenView() {
             <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px 0', borderTop: '1px dashed var(--border)', paddingTop: '12px' }}>
               {order.items.map((item: any, i: number) => (
                 <li key={i} style={{ display: 'flex', padding: '6px 0', fontSize: '15px' }}>
-                  <b style={{marginRight:'8px', minWidth: '24px'}}>{item.quantity}×</b>
-                  <span style={{flex: 1}}>{item.dish.name}</span>
+                  <b style={{ marginRight: '8px', minWidth: '24px' }}>{item.quantity}×</b>
+                  <span style={{ flex: 1 }}>{item.dish.name}</span>
                 </li>
               ))}
             </ul>
@@ -656,7 +660,7 @@ function App() {
     socket.on("new-order", (order) => {
       // toast(`New order received: ${order.id}`);
     });
-    
+
     socket.on("marketing-push", (data) => {
       if (user?.role !== 'admin') {
         toast(data.title, {
@@ -683,18 +687,18 @@ function App() {
         console.error("Failed to fetch menu", err);
         setLoadingMenu(false);
       });
-      
+
     // Auto-login
     const token = localStorage.getItem("token");
     if (token) {
       fetch("/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
       })
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data?.user) setUser(data.user);
-      })
-      .catch(() => localStorage.removeItem("token"));
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.user) setUser(data.user);
+        })
+        .catch(() => localStorage.removeItem("token"));
     }
   }, []);
 
@@ -730,10 +734,10 @@ function App() {
     setCartItems([]);
     navigate("/success");
   }} /></PageTransition>} /><Route path="/success" component={() => <PageTransition><Success onHome={() => navigate("/")} /></PageTransition>} /><Route component={HomeWrapped} /></Switch></AnimatePresence></Route></Switch>{cartOpen && <CartDrawer dishes={dishes} items={cartItems} setItems={setCartItems} onClose={() => setCartOpen(false)} onCheckout={() => { setCartOpen(false); navigate("/checkout"); }} />}
-  {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onLogin={(u) => { setUser(u); toast.success(`Welcome, ${u.name}!`); }} />}
-  {resOpen && <ReservationModal onClose={() => setResOpen(false)} />}
-  {selectedDish && <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)} onAdd={() => addToCart(selectedDish)} />}
-  <Toaster position="bottom-right" toastOptions={{ style: { background: "#1f2a22", color: "#fffdf7", border: "0" } }} /></>;
+    {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onLogin={(u) => { setUser(u); toast.success(`Welcome, ${u.name}!`); }} />}
+    {resOpen && <ReservationModal onClose={() => setResOpen(false)} />}
+    {selectedDish && <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)} onAdd={() => addToCart(selectedDish)} />}
+    <Toaster position="bottom-right" toastOptions={{ style: { background: "#1f2a22", color: "#fffdf7", border: "0" } }} /></>;
 }
 
 export default App;

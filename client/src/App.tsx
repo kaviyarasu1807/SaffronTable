@@ -708,7 +708,7 @@ function App() {
     }
     setCartItems([]);
     navigate("/success");
-  }} /></PageTransition>} /><Route path="/success" component={() => <PageTransition><Success onHome={() => navigate("/")} /></PageTransition>} /><Route component={HomeWrapped} /></Switch></AnimatePresence><Footer /></Route></Switch>{cartOpen && <CartDrawer dishes={dishes} items={cartItems} setItems={setCartItems} onClose={() => setCartOpen(false)} onCheckout={() => { setCartOpen(false); navigate("/checkout"); }} />}
+  }} /></PageTransition>} /><Route path="/success" component={() => <PageTransition><Success onHome={() => navigate("/")} /></PageTransition>} /><Route component={HomeWrapped} /></Switch></AnimatePresence></Route></Switch>{cartOpen && <CartDrawer dishes={dishes} items={cartItems} setItems={setCartItems} onClose={() => setCartOpen(false)} onCheckout={() => { setCartOpen(false); navigate("/checkout"); }} />}
   {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onLogin={(u) => { setUser(u); toast.success(`Welcome, ${u.name}!`); }} />}
   {resOpen && <ReservationModal onClose={() => setResOpen(false)} />}
   {selectedDish && <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)} onAdd={() => addToCart(selectedDish)} />}

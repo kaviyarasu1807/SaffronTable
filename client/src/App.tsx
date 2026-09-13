@@ -221,7 +221,10 @@ function Home({ dishes, addToCart, liked, toggleLike, onCart, onDishClick }: { d
         <div className="hero-kicker" style={{ color: 'var(--tomato)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '12px' }}>Authentic Indian Flavours</div>
         <h1 style={{ color: '#fffdf7' }}>Saffron Table</h1>
         <p style={{ color: '#d1d1d1', fontSize: '18px', maxWidth: '420px', lineHeight: '1.5', marginTop: '20px' }}>A perfect blend of tradition, spices and taste.</p>
-        <div className="hero-actions" style={{ marginTop: '40px' }}><button className="primary-button" style={{ padding: '16px 32px', borderRadius: '30px' }} onClick={() => navigate("/menu")}>Order Now</button></div>
+        <div className="hero-actions" style={{ marginTop: '40px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button className="primary-button" style={{ padding: '16px 32px', borderRadius: '30px' }} onClick={() => navigate("/menu")}>Order Now</button>
+          <button onClick={() => window.dispatchEvent(new Event('open-reservation'))} style={{ padding: '16px 32px', borderRadius: '30px', background: 'transparent', border: '2px solid rgba(255,255,255,0.7)', color: '#fffdf7', fontFamily: 'var(--sans)', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease', letterSpacing: '0.3px' }} onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = 'rgba(255,255,255,0.15)'; (e.target as HTMLButtonElement).style.borderColor = '#fff'; }} onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.7)'; }}>Book a Table</button>
+        </div>
       </div>
     </section>
 

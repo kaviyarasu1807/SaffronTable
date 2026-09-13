@@ -5,7 +5,8 @@ import { dishes as defaultDishes } from "./data.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dbPath = path.resolve(__dirname, "database.sqlite");
+const isVercel = process.env.VERCEL === "1" || process.env.VERCEL_ENV;
+const dbPath = isVercel ? path.join("/tmp", "database.sqlite") : path.resolve(__dirname, "database.sqlite");
 
 const db = new Database(dbPath);
 

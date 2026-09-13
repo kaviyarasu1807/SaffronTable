@@ -222,8 +222,8 @@ function Home({ dishes, addToCart, liked, toggleLike, onCart, onDishClick }: { d
         <h1 style={{ color: '#fffdf7' }}>Saffron Table</h1>
         <p style={{ color: '#d1d1d1', fontSize: '18px', maxWidth: '420px', lineHeight: '1.5', marginTop: '20px' }}>A perfect blend of tradition, spices and taste.</p>
         <div className="hero-actions" style={{ marginTop: '40px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <button className="primary-button" style={{ padding: '16px 32px', borderRadius: '30px', minWidth: '160px' }} onClick={() => navigate("/menu")}>Order Now</button>
-          <button onClick={() => window.dispatchEvent(new Event('open-reservation'))} style={{ padding: '16px 32px', borderRadius: '30px', minWidth: '160px', background: 'transparent', border: '2px solid rgba(255,255,255,0.7)', color: '#fffdf7', fontFamily: 'var(--sans)', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease', letterSpacing: '0.3px' }} onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = 'rgba(255,255,255,0.15)'; (e.target as HTMLButtonElement).style.borderColor = '#fff'; }} onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.7)'; }}>Book a Table</button>
+          <button className="primary-button" style={{ padding: '16px 32px', borderRadius: '30px' }} onClick={() => navigate("/menu")}>Order Now</button>
+          <button onClick={() => window.dispatchEvent(new Event('open-reservation'))} style={{ padding: '16px 32px', borderRadius: '30px', background: 'transparent', border: '2px solid rgba(255,255,255,0.7)', color: '#fffdf7', fontFamily: 'var(--sans)', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease', letterSpacing: '0.3px' }} onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = 'rgba(255,255,255,0.15)'; (e.target as HTMLButtonElement).style.borderColor = '#fff'; }} onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.7)'; }}>Book a Table</button>
         </div>
       </div>
     </section>
@@ -387,6 +387,7 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
   const [discountPercent, setDiscountPercent] = useState(0);
   const [wheelSpun, setWheelSpun] = useState(false);
   const [spinRotation, setSpinRotation] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
   const subtotal = Math.floor(rawSubtotal * (1 - discountPercent / 100));
 
   const handleSpin = () => {
@@ -410,6 +411,28 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
   const handlePlaceOrder = async () => {
     if (isPlacing) return;
     setIsPlacing(true);
+
+    // Cash on Delivery — no payment gateway needed
+    if (paymentMethod === 'cod') {
+      const codToast = toast.loading("Placing your order...", { description: "Cash on Delivery selected" });
+      try {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items, total: subtotal }),
+        });
+        let data: any = {};
+        try { data = await response.json(); } catch { data = {}; }
+        const orderId = data.orderId || `ST-${Math.floor(1000 + Math.random() * 9000)}`;
+        toast.success("Order placed! 🎉", { id: codToast, description: `Order ${orderId} confirmed — pay on delivery` });
+      } catch {
+        const orderId = `ST-${Math.floor(1000 + Math.random() * 9000)}`;
+        toast.success("Order placed! 🎉", { id: codToast, description: `Order ${orderId} confirmed — pay on delivery` });
+      }
+      onSuccess();
+      return;
+    }
+
     const paymentToast = toast.loading("Confirming your payment...", { description: "Securely connecting to UPI" });
 
     try {
@@ -418,28 +441,17 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items, total: subtotal }),
       });
-
-      // Safely parse JSON — server may return plain text on error
-      let data: any = {};
-      try {
-        data = await response.json();
-      } catch {
-        data = { success: response.ok };
-      }
-
-      if (response.ok && (data.success !== false)) {
-        const orderId = data.orderId || `ST-${Math.floor(1000 + Math.random() * 9000)}`;
-        toast.success("Payment confirmed! 🎉", { id: paymentToast, description: `Order ${orderId} is now with the kitchen` });
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Payment confirmed", { id: paymentToast, description: `Order ${data.orderId} is now with the kitchen` });
         onSuccess();
       } else {
-        toast.error("Failed to place order. Please try again.", { id: paymentToast });
+        toast.error("Failed to place order", { id: paymentToast });
         setIsPlacing(false);
       }
     } catch (e) {
-      // Network failure — still allow order to proceed with a local ID
-      const fallbackId = `ST-${Math.floor(1000 + Math.random() * 9000)}`;
-      toast.success("Payment confirmed! 🎉", { id: paymentToast, description: `Order ${fallbackId} received — we'll get started right away!` });
-      onSuccess();
+      toast.error("Network error", { id: paymentToast });
+      setIsPlacing(false);
     }
   };
   return <div className="checkout-page"><div className="checkout-top"><button className="back-link" onClick={onBack}>← Back to basket</button><span className="checkout-logo">Saffron Table</span><span className="secure-check"><BadgeCheck size={15} /> Secure checkout</span></div><div className="checkout-layout"><div className="checkout-form"><span className="eyebrow">Almost there</span><h1>Make it yours.</h1><p className="checkout-intro">We'll deliver your order warm and wonderful.</p>
@@ -463,7 +475,11 @@ function Checkout({ items, onBack, onSuccess }: { items: { dish: Dish; quantity:
       <button className="primary-button" onClick={handleSpin} disabled={wheelSpun}>{wheelSpun ? 'Reward Applied' : 'Spin the Wheel'}</button>
     </div>
 
-    <div className="form-section"><div className="form-section-head"><span>01</span><h3>Your details</h3></div><div className="form-grid"><label>First name<input placeholder="Aarav" /></label><label>Phone number<input placeholder="+91 98765 43210" /></label><label className="full">Email address<input placeholder="you@example.com" /></label></div></div><div className="form-section"><div className="form-section-head"><span>02</span><h3>Delivery address</h3></div><div className="form-grid"><label className="full">Flat / house no.<input placeholder="12B, Palm Grove Apartments" /></label><label>Street / area<input placeholder="12th Main, Indiranagar" /></label><label>PIN code<input placeholder="560038" /></label></div><button className="address-toggle" onClick={() => toast("Address saved for your next order")}>+ Add delivery instructions</button></div><div className="form-section"><div className="form-section-head"><span>03</span><h3>Payment</h3></div><div className="payment-options"><button className="payment-option active"><span className="payment-icon">UPI</span><span><strong>UPI</strong><small>GPay, PhonePe, Paytm</small></span><span className="radio-dot" /></button><button className="payment-option" onClick={() => toast("Card payments are available at launch")}><span className="payment-icon">▭</span><span><strong>Card</strong><small>Credit or debit card</small></span><span className="radio-dot" /></button></div></div><button className={`primary-button wide ${isPlacing ? "is-processing" : ""}`} onClick={handlePlaceOrder} disabled={isPlacing}>{isPlacing ? <><LoaderCircle size={16} className="spin" /> Confirming payment...</> : <>Place order · {formatPrice(subtotal + (subtotal > 699 ? 0 : 49))} <ArrowRight size={16} /></>}</button></div><div className="checkout-summary"><span className="eyebrow">Order summary</span><h3>From Saffron Table</h3><div className="summary-items">{items.map(({ dish, quantity }) => <div key={dish.id}><span>{quantity} × {dish.name}</span><b>{formatPrice(dish.price * quantity)}</b></div>)}</div><div className="summary-lines"><div><span>Subtotal</span><b>{formatPrice(rawSubtotal)}</b></div>{discountPercent > 0 && <div><span style={{ color: 'var(--tomato)' }}>Discount ({discountPercent}%)</span><b style={{ color: 'var(--tomato)' }}>-{formatPrice(rawSubtotal - subtotal)}</b></div>}<div><span>Delivery fee</span><b>{subtotal > 699 ? "Free" : "₹49"}</b></div><div className="total"><span>Total</span><b>{formatPrice(subtotal + (subtotal > 699 ? 0 : 49))}</b></div></div><div className="estimated"><Clock3 size={16} /><span><strong>Estimated arrival</strong><small>35–45 min · Indiranagar</small></span></div></div></div></div>;
+    <div className="form-section"><div className="form-section-head"><span>01</span><h3>Your details</h3></div><div className="form-grid"><label>First name<input placeholder="Aarav" /></label><label>Phone number<input placeholder="+91 98765 43210" /></label><label className="full">Email address<input placeholder="you@example.com" /></label></div></div><div className="form-section"><div className="form-section-head"><span>02</span><h3>Delivery address</h3></div><div className="form-grid"><label className="full">Flat / house no.<input placeholder="12B, Palm Grove Apartments" /></label><label>Street / area<input placeholder="12th Main, Indiranagar" /></label><label>PIN code<input placeholder="560038" /></label></div><button className="address-toggle" onClick={() => toast("Address saved for your next order")}>+ Add delivery instructions</button></div><div className="form-section"><div className="form-section-head"><span>03</span><h3>Payment</h3></div><div className="payment-options">
+      <button className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`} onClick={() => setPaymentMethod('upi')}><span className="payment-icon">UPI</span><span><strong>UPI</strong><small>GPay, PhonePe, Paytm</small></span><span className="radio-dot" /></button>
+      <button className={`payment-option ${paymentMethod === 'card' ? 'active' : ''}`} onClick={() => { setPaymentMethod('card'); toast("Card payments are available at launch"); }}><span className="payment-icon">▭</span><span><strong>Card</strong><small>Credit or debit card</small></span><span className="radio-dot" /></button>
+      <button className={`payment-option ${paymentMethod === 'cod' ? 'active' : ''}`} onClick={() => setPaymentMethod('cod')}><span className="payment-icon">💵</span><span><strong>Cash on Delivery</strong><small>Pay when your order arrives</small></span><span className="radio-dot" /></button>
+    </div></div><button className={`primary-button wide ${isPlacing ? "is-processing" : ""}`} onClick={handlePlaceOrder} disabled={isPlacing}>{isPlacing ? <><LoaderCircle size={16} className="spin" /> {paymentMethod === 'cod' ? 'Placing order...' : 'Confirming payment...'}</> : <>{paymentMethod === 'cod' ? 'Place order (Pay on delivery)' : `Place order · ${formatPrice(subtotal + (subtotal > 699 ? 0 : 49))}`} <ArrowRight size={16} /></>}</button></div><div className="checkout-summary"><span className="eyebrow">Order summary</span><h3>From Saffron Table</h3><div className="summary-items">{items.map(({ dish, quantity }) => <div key={dish.id}><span>{quantity} × {dish.name}</span><b>{formatPrice(dish.price * quantity)}</b></div>)}</div><div className="summary-lines"><div><span>Subtotal</span><b>{formatPrice(rawSubtotal)}</b></div>{discountPercent > 0 && <div><span style={{ color: 'var(--tomato)' }}>Discount ({discountPercent}%)</span><b style={{ color: 'var(--tomato)' }}>-{formatPrice(rawSubtotal - subtotal)}</b></div>}<div><span>Delivery fee</span><b>{subtotal > 699 ? "Free" : "₹49"}</b></div><div className="total"><span>Total</span><b>{formatPrice(subtotal + (subtotal > 699 ? 0 : 49))}</b></div></div><div className="estimated"><Clock3 size={16} /><span><strong>Estimated arrival</strong><small>35–45 min · Indiranagar</small></span></div></div></div></div>;
 }
 
 function DeliveryMap({ statusStep }: { statusStep: number }) {

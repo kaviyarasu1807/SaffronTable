@@ -327,8 +327,17 @@ function MenuPage({ dishes, addToCart, liked, toggleLike, onDishClick }: { dishe
         <h2 style={{ fontSize: '24px', fontFamily: 'var(--serif)', display: 'flex', alignItems: 'center', gap: '8px' }}><Star size={20} color="var(--tomato)" fill="var(--tomato)" /> Chef's Special</h2>
         <button onClick={() => toast("Showing our most popular dishes")}>View All</button>
       </div>
-      <div className="dish-grid menu-grid" style={{ gap: '30px' }}>{filtered.map((dish) => <DishCard key={dish.id} dish={dish} addToCart={addToCart} liked={liked.includes(dish.id)} toggleLike={toggleLike} onClick={() => onDishClick && onDishClick(dish)} />)}</div>
-      {filtered.length === 0 && <div className="empty-state"><span>◌</span><h3>Nothing found.</h3><p>Try another search or browse all dishes.</p><button className="primary-button" onClick={() => { setSearch(""); setSelected("All dishes"); setAiMood(null); }}>Reset menu</button></div>}
+      <div className="dish-grid menu-grid" style={{ gap: '30px' }}>
+        {filtered.map((dish) => <DishCard key={dish.id} dish={dish} addToCart={addToCart} liked={liked.includes(dish.id)} toggleLike={toggleLike} onClick={() => onDishClick && onDishClick(dish)} />)}
+      </div>
+      {filtered.length === 0 && (
+        <div className="empty-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <span>◌</span>
+          <h3 style={{ marginTop: '16px', fontSize: '24px', fontFamily: 'var(--serif)' }}>Dish not found</h3>
+          <p style={{ color: 'var(--muted-ink)', marginBottom: '24px' }}>Try another search or browse all dishes.</p>
+          <button className="primary-button" style={{ padding: '12px 24px', borderRadius: '30px' }} onClick={() => { setSearch(""); setSelected("All dishes"); setAiMood(null); }}>Reset menu</button>
+        </div>
+      )}
     </div>
     <Footer />
   </div>;

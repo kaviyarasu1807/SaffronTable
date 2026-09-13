@@ -216,7 +216,7 @@ function DishCard({ dish, addToCart, liked, toggleLike, onClick }: { dish: Dish;
 function Home({ dishes, addToCart, liked, toggleLike, onCart, onDishClick }: { dishes: Dish[]; addToCart: (dish: Dish) => void; liked: string[]; toggleLike: (id: string) => void; onCart: () => void; onDishClick?: (dish: Dish) => void; }) {
   const [, navigate] = useLocation();
   return <div>
-    <section className="hero-section" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url(https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=2000&auto=format&fit=crop)', backgroundSize: 'cover', backgroundPosition: 'center', width: '100%', maxWidth: '100%', margin: 0, minHeight: 'calc(100vh - 78px)', display: 'flex', alignItems: 'center', padding: '0 20px' }}>
+    <section className="hero-section hero-dark-img">
       <div className="hero-copy" style={{ margin: '0 auto', maxWidth: '1280px', width: '100%', paddingLeft: 0 }}>
         <div className="hero-kicker" style={{ color: 'var(--tomato)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '12px' }}>Authentic Indian Flavours</div>
         <h1 style={{ color: '#fffdf7' }}>Saffron Table</h1>

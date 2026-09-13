@@ -247,7 +247,7 @@ em { color: var(--tomato); font-style: normal; }
 .clean-cart .checkout-btn { padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 600; width: 100%; justify-content: center; }
 
 @media (max-width: 680px) {
-  .hero-section.hero-dark-img { padding: 60px 20px; }
+  .hero-section.hero-dark-img { padding: 60px 20px; min-height: 60vh !important; }
   .hero-copy h1 { font-size: 48px; }
   .hero-subtitle { font-size: 15px; }
   

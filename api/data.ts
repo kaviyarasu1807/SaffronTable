@@ -1,0 +1,152 @@
+export type Dish = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  rating: string;
+  time: string;
+  image: string;
+  tag?: string;
+  veg?: boolean;
+};
+
+export const dishes: Dish[] = [
+  {
+    id: "truffle-pani-puri",
+    name: "Truffle Pani Puri",
+    description: "Crisp puris, whipped potato, mint water, black truffle",
+    price: 295,
+    category: "Small plates",
+    rating: "4.9",
+    time: "12 min",
+    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=85",
+    tag: "Chef's pick",
+    veg: true,
+  },
+  {
+    id: "smoked-paneer",
+    name: "Smoked Paneer Tikka",
+    description: "Tandoor-charred paneer, kasundi, pickled onion",
+    price: 425,
+    category: "Small plates",
+    rating: "4.8",
+    time: "18 min",
+    image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=900&q=85",
+    tag: "Bestseller",
+    veg: true,
+  },
+  {
+    id: "saffron-biryani",
+    name: "Saffron Table Biryani",
+    description: "Aged basmati, spring vegetables, crispy shallots, raita",
+    price: 545,
+    category: "Mains",
+    rating: "4.9",
+    time: "24 min",
+    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=900&q=85",
+    tag: "House signature",
+    veg: true,
+  },
+  {
+    id: "butter-chicken",
+    name: "Charred Butter Chicken",
+    description: "Clay-oven chicken, tomato makhani, fenugreek, roomali roti",
+    price: 595,
+    category: "Mains",
+    rating: "4.8",
+    time: "28 min",
+    image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=900&q=85",
+    tag: "Crowd favourite",
+  },
+  {
+    id: "mango-mishti",
+    name: "Mango Mishti Doi",
+    description: "Slow-set yogurt, Alphonso mango, jaggery praline",
+    price: 245,
+    category: "Sweet finish",
+    rating: "4.7",
+    time: "8 min",
+    image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=900&q=85",
+    tag: "New",
+    veg: true,
+  },
+  {
+    id: "rose-pistachio-kulfi",
+    name: "Rose & Pistachio Kulfi",
+    description: "Hand-churned kulfi, candied rose petals, crushed pistachios",
+    price: 285,
+    category: "Sweet finish",
+    rating: "4.9",
+    time: "5 min",
+    image: "/dishes/rose-pistachio-kulfi.png",
+    veg: true,
+  },
+  {
+    id: "kokum-spritz",
+    name: "Kokum & Basil Spritz",
+    description: "Kokum shrub, basil, lime, sparkling water",
+    price: 195,
+    category: "Drinks",
+    rating: "4.9",
+    time: "5 min",
+    image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=900&q=85",
+    tag: "Refreshing",
+    veg: true,
+  },
+  {
+    id: "tandoori-malai-broccoli",
+    name: "Tandoori Malai Broccoli",
+    description: "Charred broccoli florets, cream cheese marinade, toasted almonds",
+    price: 345,
+    category: "Small plates",
+    rating: "4.8",
+    time: "15 min",
+    image: "https://images.unsplash.com/photo-1551224211-f19b220377f0?auto=format&fit=crop&w=900&q=85",
+    veg: true,
+  },
+  {
+    id: "gunpowder-calamari",
+    name: "Gunpowder Calamari",
+    description: "Crispy fried calamari tossed in spicy podi, curry leaf mayo",
+    price: 495,
+    category: "Small plates",
+    rating: "4.7",
+    time: "12 min",
+    image: "https://images.unsplash.com/photo-1599487405270-80252b5c6893?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    id: "kerala-mutton-stew",
+    name: "Kerala Mutton Stew",
+    description: "Slow-cooked mutton, coconut milk, whole spices, appam",
+    price: 645,
+    category: "Mains",
+    rating: "4.9",
+    time: "25 min",
+    image: "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=900&q=85",
+    tag: "Weekend special",
+  },
+  {
+    id: "palak-guchhi-risotto",
+    name: "Palak & Guchhi Risotto",
+    description: "Creamy spinach risotto, Kashmiri morels, parmesan crisps",
+    price: 595,
+    category: "Mains",
+    rating: "4.8",
+    time: "22 min",
+    image: "/dishes/palak-guchhi-risotto.jpg",
+    veg: true,
+  },
+  {
+    id: "chai-old-fashioned",
+    name: "Chai Spiced Old Fashioned",
+    description: "Bourbon, masala chai syrup, angostura bitters, orange peel",
+    price: 495,
+    category: "Drinks",
+    rating: "4.9",
+    time: "5 min",
+    image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=900&q=85",
+  },
+];
+
+export const orders: any[] = [];

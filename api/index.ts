@@ -90,7 +90,8 @@ app.post("/api/auth/register", async (req, res) => {
     createUser(userId, email, passwordHash, name || "Guest");
     
     const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: "7d" });
-    res.status(201).json({ token, user: { id: userId, email, name: name || "Guest", points: 0 } });
+    const userRole = email === 'kaviyarasur013@gmail.com' ? 'admin' : 'customer';
+    res.status(201).json({ token, user: { id: userId, email, name: name || "Guest", points: 0, role: userRole } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Registration failed" });
@@ -109,7 +110,7 @@ app.post("/api/auth/login", async (req, res) => {
     if (!isValid) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "7d" });
-    res.json({ token, user: { id: user.id, email: user.email, name: user.name, points: user.points } });
+    res.json({ token, user: { id: user.id, email: user.email, name: user.name, points: user.points, role: user.role } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Login failed" });
@@ -128,10 +129,76 @@ app.get("/api/auth/me", (req, res) => {
     const user = getUserById(decoded.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    res.json({ user: { id: user.id, email: user.email, name: user.name, points: user.points } });
+    res.json({ user: { id: user.id, email: user.email, name: user.name, points: user.points, role: user.role } });
   } catch (err) {
     res.status(401).json({ error: "Invalid token" });
   }
+});
+
+// --- Admin Analytics & Marketing Routes ---
+
+// Simulate basic admin auth check
+const isAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return res.status(401).json({ error: "Missing token" });
+  try {
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const user = getUserById(decoded.userId);
+    if (!user || user.role !== 'admin') return res.status(403).json({ error: "Admin access required" });
+    next();
+  } catch (e) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+};
+
+app.get("/api/admin/analytics/sales", isAdmin, (_req, res) => {
+  try {
+    const orders = getOrders();
+    const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+    const todayOrders = orders.filter(o => new Date(o.timestamp).toDateString() === new Date().toDateString()).length;
+    res.json({ totalRevenue, totalOrders: orders.length, todayOrders, recentOrders: orders.slice(0, 5) });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch sales analytics" });
+  }
+});
+
+app.get("/api/admin/analytics/customers", isAdmin, (_req, res) => {
+  try {
+    // Basic mock logic - in a real DB we'd count 'users'
+    res.json({ totalCustomers: 120, activeCustomers: 45, newThisWeek: 12 });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch customer analytics" });
+  }
+});
+
+app.get("/api/export/sales.csv", (_req, res) => {
+  try {
+    const orders = getOrders();
+    let csv = "Order ID,Date,Total Amount,Items Count\n";
+    orders.forEach(o => {
+      csv += `${o.id},${o.timestamp},${o.total},${o.items.length}\n`;
+    });
+    res.header("Content-Type", "text/csv");
+    res.attachment("sales_report.csv");
+    res.send(csv);
+  } catch (err) {
+    res.status(500).json({ error: "Export failed" });
+  }
+});
+
+app.post("/api/admin/marketing/email", isAdmin, (req, res) => {
+  const { subject, body } = req.body;
+  console.log(`[EMAIL CAMPAIGN SENT] Subject: ${subject}`);
+  // In a real app we would use Resend/SendGrid here
+  res.json({ success: true, message: "Campaign dispatched to 120 users" });
+});
+
+app.post("/api/admin/marketing/push", isAdmin, (req, res) => {
+  const { title, message } = req.body;
+  console.log(`[PUSH NOTIFICATION TRIGGERED] ${title} - ${message}`);
+  io.emit("marketing-push", { title, message }); // Broadcast to all connected clients!
+  res.json({ success: true, message: "Push notification sent!" });
 });
 
 // Handle client-side routing - serve index.html for all routes

@@ -634,7 +634,7 @@ function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [resOpen, setResOpen] = useState(false);
-  const [user, setUser] = useState<{ name: string; points: number } | null>(null);
+  const [user, setUser] = useState<{ name: string; points: number; role?: string } | null>(null);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [theme, setTheme] = useState('light');
   const [path, navigate] = useLocation();
@@ -650,6 +650,27 @@ function App() {
     window.addEventListener('open-reservation', handleRes);
     return () => window.removeEventListener('open-reservation', handleRes);
   }, []);
+
+  useEffect(() => {
+    const socket = io();
+    socket.on("new-order", (order) => {
+      // toast(`New order received: ${order.id}`);
+    });
+    
+    socket.on("marketing-push", (data) => {
+      if (user?.role !== 'admin') {
+        toast(data.title, {
+          description: data.message,
+          icon: '✨',
+          duration: 10000,
+        });
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user]);
 
   useEffect(() => {
     fetch("/api/menu")
@@ -700,7 +721,7 @@ function App() {
   const HomeWrapped = () => <PageTransition><Home dishes={dishes} addToCart={addToCart} liked={liked} toggleLike={toggleLike} onCart={() => setCartOpen(true)} onDishClick={setSelectedDish} /></PageTransition>;
   const MenuPageWrapped = () => <PageTransition><MenuPage dishes={dishes} addToCart={addToCart} liked={liked} toggleLike={toggleLike} onDishClick={setSelectedDish} /></PageTransition>;
 
-  return <><Switch><Route path="/kitchen" component={KitchenView} /><Route><Header cartCount={cartCount} onCart={() => setCartOpen(true)} user={user} theme={theme} toggleTheme={toggleTheme} onLoginClick={() => { if (user) { localStorage.removeItem("token"); setUser(null); toast("Logged out successfully"); } else setAuthOpen(true); }} /><AnimatePresence mode="wait"><Switch location={path} key={path}><Route path="/" component={HomeWrapped} /><Route path="/menu" component={MenuPageWrapped} /><Route path="/checkout" component={() => <PageTransition><Checkout items={cartItems} onBack={() => setCartOpen(true)} onSuccess={() => {
+  return <><Switch><Route path="/admin" component={() => <AdminPage user={user} />} /><Route path="/kitchen" component={KitchenView} /><Route><Header cartCount={cartCount} onCart={() => setCartOpen(true)} user={user} theme={theme} toggleTheme={toggleTheme} onLoginClick={() => { if (user) { localStorage.removeItem("token"); setUser(null); toast("Logged out successfully"); } else setAuthOpen(true); }} /><AnimatePresence mode="wait"><Switch location={path} key={path}><Route path="/" component={HomeWrapped} /><Route path="/menu" component={MenuPageWrapped} /><Route path="/checkout" component={() => <PageTransition><Checkout items={cartItems} onBack={() => setCartOpen(true)} onSuccess={() => {
     if (user) {
       const earned = Math.floor(cartItems.reduce((sum, item) => sum + item.dish.price * item.quantity, 0) / 100);
       setUser({ ...user, points: user.points + earned });

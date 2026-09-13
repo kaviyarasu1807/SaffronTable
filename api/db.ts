@@ -22,7 +22,8 @@ db.exec(`
     time TEXT NOT NULL,
     image TEXT NOT NULL,
     tag TEXT,
-    veg INTEGER
+    veg INTEGER,
+    inventory_count INTEGER DEFAULT 50
   );
 
   CREATE TABLE IF NOT EXISTS orders (
@@ -47,7 +48,8 @@ db.exec(`
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     name TEXT,
-    points INTEGER DEFAULT 0
+    points INTEGER DEFAULT 0,
+    role TEXT DEFAULT 'customer'
   );
 `);
 
@@ -55,8 +57,8 @@ db.exec(`
 const count = db.prepare("SELECT COUNT(*) as c FROM dishes").get() as { c: number };
 if (count.c === 0) {
   const insertDish = db.prepare(`
-    INSERT INTO dishes (id, name, description, price, category, rating, time, image, tag, veg)
-    VALUES (@id, @name, @description, @price, @category, @rating, @time, @image, @tag, @veg)
+    INSERT INTO dishes (id, name, description, price, category, rating, time, image, tag, veg, inventory_count)
+    VALUES (@id, @name, @description, @price, @category, @rating, @time, @image, @tag, @veg, 50)
   `);
   
   const insertMany = db.transaction((dishesToInsert: any[]) => {
@@ -110,12 +112,12 @@ export function createReservation(name: string, date: string, time: string, gues
   return reservationId;
 }
 
-export function createUser(id: string, email: string, passwordHash: string, name: string) {
+export function createUser(id: string, email: string, passwordHash: string, name: string, role: string = 'customer') {
   const insert = db.prepare(`
-    INSERT INTO users (id, email, password_hash, name, points)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO users (id, email, password_hash, name, points, role)
+    VALUES (?, ?, ?, ?, ?, ?)
   `);
-  insert.run(id, email, passwordHash, name, 0);
+  insert.run(id, email, passwordHash, name, 0, role);
 }
 
 export function getUserByEmail(email: string) {
